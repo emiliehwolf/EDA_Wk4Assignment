@@ -1,6 +1,6 @@
 ## pm25analysis.R
 ## Author: Emilie H. Wolf
-## Date:
+## Date: Friday, May 26, 2017
 ## Description: This is the final peer-review assignment, (AKA Course Project 2)
 ## for Coursera's Exploratory Data Analysis class.
 ## URL of Data: https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2FNEI_data.zip
