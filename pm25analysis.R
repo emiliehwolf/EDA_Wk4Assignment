@@ -13,3 +13,9 @@
 ## EDA_Wk4Assignment. Next I opened SourceTree and created a new repository.
 ## Then I opened RStudio and started a new R Project for that folder.
 ## Now as I work on writing the script, I can save my progess to my GitHub.
+
+##############################################################################
+
+## Read in datasets
+dat <- readRDS("Source_Classification_Code.rds")
+sumdat <- readRDS("summarySCC_PM25.rds")
