@@ -40,22 +40,42 @@ barplot(totals*.00000090718474, main = "Total PM2.5 Emissions From All Sources",
 bc <- subset(NEI, fips == "24510")
 totals <- with(bc, tapply(Emissions, year, sum, na.rm=T))
 barplot(totals, main = "Total PM2.5 Emissions for Baltimore City, Maryland \nwith Linear Fit Model", 
-        ylab = "Tons of PM2.5", xlab = "Year", col = "lightblue")
+        ylab = "PM2.5 Emissions (Tons)", xlab = "Year", col = "lightblue")
 x <- 1:4
 y <- as.vector(totals)
 fit <- lm(y ~ x)
 abline(fit, lty = "dashed")
+## abline(h=y[1],lty = "dotted")
 
 ###########################################
 ## 3. Of the four types of sources indicated by the 𝚝𝚢𝚙𝚎 (point, nonpoint,
 ## onroad, nonroad) variable, which of these four sources have seen decreases
 ## in emissions from 1999–2008 for Baltimore City? Which have seen increases
 ## in emissions from 1999–2008? Use the ggplot2 plotting system to make a plot
-## answer this question.
+## to answer this question.
+
+library(ggplot2)
+theme_set(theme_bw(base_size = 14))
+bc <- subset(NEI, fips == "24510", c(Emissions,type,year))
+
+ggplot(bc, aes(year, Emissions, color = type)) +
+        geom_line(stat = "summary", fun.y="sum") + 
+        labs(y = "Total PM2.5 Emissions (Tons)", x = "Year") +
+        labs(title = "PM2.5 Emissions for Baltimore City, MD by Source Type") +
+        geom_point
+
+ggplot(bc, aes(factor(year), Emissions, fill = type)) +
+        geom_bar(stat="identity") + guides(fill=FALSE) +
+        facet_grid(.~type, scales = "fixed", space = "free") + 
+        labs(x = "Year", y = "Total PM2.5 Emissions (Tons)") + 
+        labs(title = "PM2.5 Emissions for Baltimore City, MD by Source Type") 
+
+
+###########################################
+## 4. Across the United States, how have emissions from coal
+## combustion-related sources changed from 1999–2008?
 
 
 
-
-## 4. Across the United States, how have emissions from coal combustion-related sources changed from 1999–2008?
 ## 5. How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
 ## 6. Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California (𝚏𝚒𝚙𝚜 == "𝟶𝟼𝟶𝟹𝟽"). Which city has seen greater changes over time in motor vehicle emissions?
