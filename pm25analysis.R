@@ -58,17 +58,27 @@ library(ggplot2)
 theme_set(theme_bw(base_size = 14))
 bc <- subset(NEI, fips == "24510", c(Emissions,type,year))
 
+## Plot lines without manipulating data
 ggplot(bc, aes(year, Emissions, color = type)) +
         geom_line(stat = "summary", fun.y="sum") + 
         labs(y = "Total PM2.5 Emissions (Tons)", x = "Year") +
-        labs(title = "PM2.5 Emissions for Baltimore City, MD by Source Type") +
-        geom_point
+        labs(title = "PM2.5 Emissions for Baltimore City, MD by Source Type")
 
+## 4-panel boxplot
 ggplot(bc, aes(factor(year), Emissions, fill = type)) +
         geom_bar(stat="identity") + guides(fill=FALSE) +
         facet_grid(.~type, scales = "fixed", space = "free") + 
         labs(x = "Year", y = "Total PM2.5 Emissions (Tons)") + 
         labs(title = "PM2.5 Emissions for Baltimore City, MD by Source Type") 
+
+## totals <- xtabs(Emissions ~ year + type, bc)
+
+## Aggregate data and plot lines
+totals <- aggregate(Emissions ~ year + type, data = bc, FUN = "sum")
+ggplot(totals, aes(year,Emissions,color=type)) + geom_line() + 
+        geom_point(aes(shape = type), size = 3) +
+        labs(x = "Year", y = "Total PM2.5 Emissions (Tons)") + 
+        labs(title = "PM2.5 Emissions for Baltimore City, MD \nby Source Type")
 
 
 ###########################################
