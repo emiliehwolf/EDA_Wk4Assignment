@@ -20,6 +20,7 @@
 NEI <- readRDS("summarySCC_PM25.rds")
 SCC <- readRDS("Source_Classification_Code.rds")
 
+###########################################
 ## 1. Have total emissions from PM2.5 decreased in the United States from 1999
 ## to 2008? Using the base plotting system, make a plot showing the total PM2.5
 ## emission from all sources for each of the years 1999, 2002, 2005, and 2008.
@@ -28,17 +29,24 @@ SCC <- readRDS("Source_Classification_Code.rds")
 totals <- with(NEI, tapply(Emissions, year, sum, na.rm = T))
 
 ## Simple base barplot of Emissions, tons converted to teragrams
-barplot(totals*.000000907185, main = "Total PM2.5 Emissions From All Sources",
-        ylab = "Total Emissions in Teragrams", xlab = "Year", col = "tan")
+barplot(totals*.00000090718474, main = "Total PM2.5 Emissions From All Sources",
+        ylab = "Teragrams of PM2.5", xlab = "Year", col = "tan")
 
+###########################################
 ## 2. Have total emissions from PM2.5 decreased in the Baltimore City, Maryland 
 ## (𝚏𝚒𝚙𝚜 == "𝟸𝟺𝟻𝟷𝟶") from 1999 to 2008? Use the base plotting system
 ## to make a plot answering this question.
 
+bc <- subset(NEI, fips == "24510")
+totals <- with(bc, tapply(Emissions, year, sum, na.rm=T))
+barplot(totals, main = "Total PM2.5 Emissions for Baltimore City, Maryland \nwith Linear Fit Model", 
+        ylab = "Tons of PM2.5", xlab = "Year", col = "lightblue")
+x <- 1:4
+y <- as.vector(totals)
+fit <- lm(y ~ x)
+abline(fit, lty = "dashed")
 
-
-
-
+###########################################
 ## 3. Of the four types of sources indicated by the 𝚝𝚢𝚙𝚎 (point, nonpoint,
 ## onroad, nonroad) variable, which of these four sources have seen decreases
 ## in emissions from 1999–2008 for Baltimore City? Which have seen increases
