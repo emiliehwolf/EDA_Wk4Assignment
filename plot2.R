@@ -23,6 +23,7 @@ totals <- with(bc, tapply(Emissions, year, sum, na.rm = TRUE))
 png(filename = "plot2.png", width = 800, height = 600)
 
 ## Base graphics barplot
+par(mfrow=c(1,1))
 barplot(totals, main = "Total PM2.5 Emissions for Baltimore City, Maryland
         \nwith Linear Fit Model", ylab = "PM2.5 Emissions (Tons)", 
         xlab = "Year", col = "lightblue")
@@ -30,7 +31,7 @@ barplot(totals, main = "Total PM2.5 Emissions for Baltimore City, Maryland
 ## Create the formula for linear regression model
 x <- 1:4; y <- as.vector(totals); fit <- lm(y ~ x)
 
-## Plot the descending line
+## Plot the line to show negative slope
 abline(fit, lty = "dashed")
 
 ## Close and save PNG graphic
