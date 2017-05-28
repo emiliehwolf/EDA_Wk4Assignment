@@ -85,7 +85,60 @@ ggplot(totals, aes(year,Emissions,color=type)) + geom_line() +
 ## 4. Across the United States, how have emissions from coal
 ## combustion-related sources changed from 1999–2008?
 
+##ccindices <- intersect(union(grep("comb ", SCC$Short.Name, ignore.case = T, value = T), grep("combustion", SCC$Short.Name, ignore.case = T, value = T)),grep("coal ", SCC$Short.Name, ignore.case = T, value = T))
+##CoalCombustionSCC <- subset(SCC, EI.Sector %in% c("Fuel Comb - Comm/Institutional - Coal","Fuel Comb - Electric Generation - Coal","Fuel Comb - Industrial Boilers, ICEs - Coal"))
 
+scc <- subset(SCC, EI.Sector=="Fuel Comb - Electric Generation - Coal" | 
+                EI.Sector=="Fuel Comb - Industrial Boilers, ICEs - Coal" | 
+                EI.Sector=="Fuel Comb - Comm/Institutional - Coal",
+                select = SCC)
+CoalCombustion <- subset(NEI, SCC %in% scc$SCC)
 
-## 5. How have emissions from motor vehicle sources changed from 1999–2008 in Baltimore City?
-## 6. Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California (𝚏𝚒𝚙𝚜 == "𝟶𝟼𝟶𝟹𝟽"). Which city has seen greater changes over time in motor vehicle emissions?
+ggplot(CoalCombustion, aes(year, Emissions*0.000907185)) + 
+        geom_line(stat = "summary", fun.y = "sum") + 
+        labs(y = "PM2.5 Emissions in Gigagrams", x = "Year") +
+        labs(title = "PM2.5 Coal Combustion Related Emissions")
+
+totals <- with(CoalCombustion, tapply(Emissions, year, sum, na.rm = T))
+barplot(totals*0.000907185, main = "PM2.5 Emissions From Coal Combustion Sources",
+        ylab = "Gigagrams of PM2.5", xlab = "Year")
+
+###############################################
+## 5. How have emissions from motor vehicle sources changed 
+## from 1999–2008 in Baltimore City?
+
+bcmv <- subset(NEI, fips == "24510" & type == "ON-ROAD", select = c(Emissions,year))
+ggplot(bcmv, aes(as.factor(year), Emissions)) + 
+        geom_bar(stat = "summary", fun.y = "sum", fill = "#cc3300") + 
+        labs(y = "PM2.5 Emissions in Tons", x = "Year") +
+        labs(title = "PM2.5 Motor Vehicle Emissions in Baltimore City, MD")
+
+###############################################
+## 6. Compare emissions from motor vehicle sources in Baltimore City
+## with emissions from motor vehicle sources in Los Angeles County,
+## California (𝚏𝚒𝚙𝚜 == "𝟶𝟼𝟶𝟹𝟽"). Which city has seen greater
+## changes over time in motor vehicle emissions?
+
+mv <- subset(NEI, (fips == "24510" | fips == "06037") & type == "ON-ROAD", 
+        select = c(Emissions,year,fips))
+totals <- aggregate(Emissions ~ year + fips, data = mv, FUN = "sum")
+
+plot1 <- ggplot() + geom_line(data = totals, aes(x = as.factor(year), 
+        y = Emissions, group=fips, color = fips)) +
+        labs(y = "PM2.5 Emissions in Tons", x = "Year") +
+        labs(title = "Comparison of Motor Vehicle Emissions") + 
+        theme(legend.title=element_blank()) + 
+        scale_color_hue(labels=c("Los Angeles\nCounty", "Baltimore City"))
+
+totals[1:4,3] <- totals[1:4,3] - totals[1,3]
+totals[5:8,3] <- totals[5:8,3] - totals[5,3]
+
+plot2 <- ggplot() + geom_line(data = totals, aes(x = as.factor(year), 
+        y = Emissions, group=fips, color = fips)) +
+        labs(y = "Change in PM2.5 Emissions (tons)", x = "Year") +
+        labs(title = "Comparison of Motor Vehicle Emissions") + 
+        theme(legend.title=element_blank()) + 
+        scale_color_hue(labels=c("Los Angeles\nCounty", "Baltimore City"))
+
+library(gridExtra)
+grid.arrange(plot1, plot2, ncol=2)
