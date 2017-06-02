@@ -33,3 +33,33 @@ fit <- lm(y ~ x)
 abline(fit, lty = "dashed")
 ```
 ![plot2](https://github.com/emiliehwolf/EDA_Wk4Assignment/blob/master/plot2.png)
+
+Of the four types of sources indicated by the type (point, nonpoint, onroad, nonroad) variable, which of these four sources have seen decreases in emissions from 1999–2008 for Baltimore City? Which have seen increases in emissions from 1999–2008? Use the ggplot2 plotting system to make a plot to answer this question.
+
+```r
+library(ggplot2)
+theme_set(theme_bw(base_size = 14))
+bc <- subset(NEI, fips == "24510", c(Emissions,type,year))
+
+ggplot(bc, aes(year, Emissions, color = type)) +
+        geom_line(stat = "summary", fun.y="sum") + 
+        labs(y = "Total PM2.5 Emissions (Tons)", x = "Year") +
+        labs(title = "PM2.5 Emissions for Baltimore City, MD by Source Type")
+```
+![plota](https://github.com/emiliehwolf/EDA_Wk4Assignment/blob/master/plota.png)
+```r
+ggplot(bc, aes(factor(year), Emissions, fill = type)) +
+        geom_bar(stat="identity") + guides(fill=FALSE) +
+        facet_grid(.~type, scales = "fixed", space = "free") + 
+        labs(x = "Year", y = "Total PM2.5 Emissions (Tons)") + 
+        labs(title = "PM2.5 Emissions for Baltimore City, MD by Source Type") 
+```
+![plotb](https://github.com/emiliehwolf/EDA_Wk4Assignment/blob/master/plotb.png)
+```r
+totals <- aggregate(Emissions ~ year + type, data = bc, FUN = "sum")
+ggplot(totals, aes(year,Emissions,color=type)) + geom_line() + 
+        geom_point(aes(shape = type), size = 3) +
+        labs(x = "Year", y = "Total PM2.5 Emissions (Tons)") + 
+        labs(title = "PM2.5 Emissions for Baltimore City, MD \nby Source Type")
+```
+![plot3](https://github.com/emiliehwolf/EDA_Wk4Assignment/blob/master/plot3.png)
