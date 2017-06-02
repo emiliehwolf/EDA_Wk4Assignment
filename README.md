@@ -94,7 +94,7 @@ ggplot(bcmv, aes(as.factor(year), Emissions)) +
 ```
 ![plot5](https://github.com/emiliehwolf/EDA_Wk4Assignment/blob/master/plot5.png)
 
-Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California (𝚏𝚒𝚙𝚜 == "𝟶𝟼𝟶𝟹𝟽"). Which city has seen greater changes over time in motor vehicle emissions?
+Compare emissions from motor vehicle sources in Baltimore City with emissions from motor vehicle sources in Los Angeles County, California. Which city has seen greater changes over time in motor vehicle emissions?
 ```r
 mv <- subset(NEI, (fips == "24510" | fips == "06037") & type == "ON-ROAD", 
         select = c(Emissions,year,fips))
